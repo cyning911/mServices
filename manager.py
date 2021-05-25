@@ -1,0 +1,38 @@
+#!/usr/bin/python3
+from tornado.web import Application, RequestHandler
+from tornado.ioloop import IOLoop
+from tornado import options
+
+class IndexHandler(RequestHandler):
+    def get(self):
+        self.write('<h3>我是主页</h3>')
+
+def make_app():
+    return Application([
+        ('/', IndexHandler),
+    ], default_host=options.options.host)
+
+
+if __name__ == '__main__':
+    # 定义命令行参数
+    options.define('port',
+                   default=8000,
+                   type=int,
+                   help='bind socket port')
+    options.define('host',
+                   default='localhost',
+                   type=str,
+                   help='设置host name')
+
+    # 解析命令行参数
+    options.parse_command_line()
+
+    app = make_app()
+    app.listen(options.options.port)  # 使用命令行参数
+
+    print("starting Web Server http://%s:%s" % (
+        options.options.host,
+        options.options.port
+    ))
+    # 启动服务
+    IOLoop.current().start()
