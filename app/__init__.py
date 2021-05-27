@@ -1,15 +1,34 @@
 #!/usr/bin/python3
-from tornado.web import Application, RequestHandler
-from app.views.cookie_v import CookieHandler
-from app.views.index_v import IndexHandler
-from app.views.order_v import OrderHandler
-from app.views.search_v import SearchHandler
+import os
 
+from tornado.web import Application, RequestHandler
+
+from app.ui.menu import MenuModule
+from app.ui.nav import NavModule
+from app.views.cookie import CookieHandler
+from app.views.index import IndexHandler
+from app.views.order import OrderHandler
+from app.views.search import SearchHandler
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+settings = {
+    'debug': True,
+    'template_path': os.path.join(BASE_DIR, 'templates'),
+    'static_path': os.path.join(BASE_DIR, 'static'),
+    'static_url_prefix': '/s/',
+    'ui_modules': {
+        'Nav': NavModule,
+        'Menu': MenuModule
+    }
+}
 
 def make_app(host='localhost'):
-    return Application([
-        ('/', IndexHandler),
-        ('/search', SearchHandler),
-        ('/cookie', CookieHandler),
-        (r'/order/(?P<code>\d+)/(?P<id>\d+)', OrderHandler),
-    ], default_host=host)
+
+    return Application(handlers=[
+                      ('/', IndexHandler),
+                      ('/search', SearchHandler),
+                      ('/cookie', CookieHandler),
+                      (r'/order/(?P<code>\d+)/(?P<id>\d+)', OrderHandler),
+    ], default_host=host, **settings)
