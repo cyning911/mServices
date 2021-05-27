@@ -1,17 +1,9 @@
 #!/usr/bin/python3
-from tornado.web import Application, RequestHandler
+
 from tornado.ioloop import IOLoop
 from tornado import options
 
-class IndexHandler(RequestHandler):
-    def get(self):
-        self.write('<h3>我是主页</h3>')
-
-def make_app():
-    return Application([
-        ('/', IndexHandler),
-    ], default_host=options.options.host)
-
+from app import make_app
 
 if __name__ == '__main__':
     # 定义命令行参数
@@ -27,7 +19,7 @@ if __name__ == '__main__':
     # 解析命令行参数
     options.parse_command_line()
 
-    app = make_app()
+    app = make_app(options.options.host)
     app.listen(options.options.port)  # 使用命令行参数
 
     print("starting Web Server http://%s:%s" % (
